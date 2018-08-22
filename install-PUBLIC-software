@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# script to install PUBLIC software with an array. Taken from jamf professional services script
+# which can be found here: https://github.com/jamfprofessionalservices/DEP-Notify/blob/master/depNotify.sh
+
+JAMFBIN=/usr/local/bin/jamf
+DNLOG=/var/tmp/depnotify.log
+
+# The policy array must be formatted "Progress Bar text,customTrigger". These will be
+# run in order as they appear below.
+POLICY_ARRAY=(
+  "Installing KeyClient,install-keyclient-desktop"
+  "Installing Microsoft Office 2016,install-office2016"
+  "Setting Office 2016 Prefs,install-office2016-prefs"
+  "Installing Pharos,install-pharos"
+  "Installing Symantec,install-SEP-academic"
+  "Installing Xerox Drivers,install-xerox-drivers"
+  "Installing iWork,install-iwork"
+  "Installing GarageBand,install-garageband"
+  "Installing iMovie,install-imovie"
+  "Installing Final Cut Pro X,install-finalcutapps"
+  "Installing Corel Painter 2017,install-corel2017"
+  "Installing VLC,install-vlc"
+  "Installing Maya,install-maya2018"
+  "Installing Mudbox,install-mudbox2018"
+  "Installing Chrome,install-chrome"
+  "Installing Rhino,install-rhino"
+  "Installing OIV,install-oiv"
+  "Installing Adobe CC,install-adobeCC-2018"
+  "Installing Adobe Acrobat,install-acrobat"
+  "Installing Flash,install-flash"
+  "Installing Fetch,install-fetch"
+  "Installing BBEdit,install-bbedit"
+  "Installing Max,install-max"
+  "Installing Poser,install-poser"
+  "Installing PUBLIC Utilities,install-public-utils"
+  "Binding to Active Directory,install-bind-to-ad"
+)
+
+# Loop to run policies
+for POLICY in "${POLICY_ARRAY[@]}"; do
+  echo "Status: $(echo "$POLICY" | cut -d ',' -f1)" >> "$DNLOG"
+    "$JAMFBIN" policy -event "$(echo "$POLICY" | cut -d ',' -f2)"
+done
+
+# don't update inventory, the provisioning script will do that for you!

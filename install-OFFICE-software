@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# script to install OFFICE software with an array. Taken from jamf professional services script
+# which can be found here: https://github.com/jamfprofessionalservices/DEP-Notify/blob/master/depNotify.sh
+
+JAMFBIN=/usr/local/bin/jamf
+DNLOG=/var/tmp/depnotify.log
+
+# The policy array must be formatted "Progress Bar text,customTrigger". These will be
+# run in order as they appear below.
+POLICY_ARRAY=(
+  "Installing KeyClient,install-keyclient-desktop"
+  "Installing Microsoft Office 2016,install-office2016"
+  "Setting Office 2016 Prefs,install-office2016-prefs"
+  "Installing Pharos,install-pharos"
+  "Installing Symantec,install-SEP-office"
+  "Installing Xerox Drivers,install-xerox-drivers"
+  "Installing iWork,install-iwork"
+  "Installing Chrome,install-chrome"
+  "Installing OIV,install-oiv"
+  "Installing Adobe Acrobat,install-acrobat"
+  "Installing Flash,install-flash"
+  "Installing Fetch,install-fetch"
+  "Installing Firefox ESR,install-firefox-esr"
+  "Installing OFFICE Utilities,install-office-utils"
+)
+
+# Loop to run policies
+for POLICY in "${POLICY_ARRAY[@]}"; do
+  echo "Status: $(echo "$POLICY" | cut -d ',' -f1)" >> "$DNLOG"
+    "$JAMFBIN" policy -event "$(echo "$POLICY" | cut -d ',' -f2)"
+done
+
+# don't update inventory, the provisioning script will do that for you!
