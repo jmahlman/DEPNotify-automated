@@ -24,7 +24,7 @@ else
 	echo "No JSS server set. Exiting..."
 	exit 1
 fi
-# I don't like hardcoding passwords but...
+# I don't like hardcoding passwords but since we're putting this locally on the machine...
 APIUSER="USERNAME"
 APIPASS="PASSWORD"
 
