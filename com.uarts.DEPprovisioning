@@ -15,6 +15,8 @@
 #
 # Changelog
 #
+# 8/24/18	- Removed an entire section of "MainText" because it was redundant.
+# 8/23/18	- Moved the caffeinate command because it obviously wasn't running if a machine already existed.  Oops.
 # 8/22/18 - New script to merge all DEPprovisioning instances
 #
 # Get the JSS URL from the Mac's jamf plist file, we'll use this to check if the machine is already in the jss
@@ -58,6 +60,10 @@ if pgrep -x "Finder" \
 && [ "$CURRENTUSER" != "_mbsetupuser" ] \
 && [ ! -f "${setupDone}" ]; then
 
+	# Let's caffinate the mac because this can take long
+	/usr/bin/caffeinate -d -i -m -u -s &
+	caffeinatepid=$!
+
 	# Kill any installer process running
 	killall Installer
 	# Wait a few seconds
@@ -88,10 +94,6 @@ if pgrep -x "Finder" \
 	  sudo -u "$CURRENTUSER" /var/tmp/DEPNotify.app/Contents/MacOS/DEPNotify -fullScreen &
 		echo "Command: MainText: Make sure this Mac is plugged into a wired network connection before beginning. \n \n \
 		If this is a FACSTAFF machine, enter the username in the \"Computer or User Name\" field." >> $DNLOG
-
-	  # Let's caffinate the mac because this can take long
-	  /usr/bin/caffeinate -d -i -m -u &
-	  caffeinatepid=$!
 
 	  # get user input...
 	  echo "Command: ContinueButtonRegister: Begin" >> $DNLOG
