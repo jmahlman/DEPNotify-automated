@@ -121,22 +121,8 @@ EOF
 		# Upload the asset tag xml file
 		/usr/bin/curl -sfku "$APIUSER":"$APIPASS" "$JSSURL"JSSResource/computers/serialnumber/"$serial" -H "Content-type: text/xml" -T /var/tmp/assetTag.xml -X PUT
 
-		# Since we have a different naming convention for FACSTAFF machines and we need to set the "User" info in the jss
-		# we're going to break down the naming of the system by cohort here.
-		echo "Command: DeterminateManualStep:" >> $DNLOG
-		if [[ "$cohort" == "FACSTAFF" ]]; then
-			echo "Status: Assigning and renaming device..." >> $DNLOG
-			$JAMFBIN policy -event enroll-assignFacstaff # This runs the script 'DEP-DEPNotify-assignFacstaff.sh'
-			userName=$(/usr/libexec/plistbuddy $DNPLIST -c "print 'Computer or User Name'" | tr [A-Z] [a-z])
-		  echo "Status: Creating local user account with password as username..." >> $DNLOG
-		  $JAMFBIN createAccount -username $userName -realname $userName -password $userName -admin
-		else
-			echo "Status: Setting computer name..." >> $DNLOG
-			$JAMFBIN setComputerName -name "${computerUserName}"
-		fi
 	else
 		# This is if the machine is already found on the server
-
 		# Set variables for Computer Name and Role to those from the receipts
 		computerUserName=$jssMacName
 		cohort=$jssCohort
@@ -152,6 +138,21 @@ EOF
 
 	# Carry on with the setup...
 	# This is where we do everything else...
+
+	# Since we have a different naming convention for FACSTAFF machines and we need to set the "User" info in the jss
+	# we're going to break down the naming of the system by cohort here.
+	echo "Command: DeterminateManualStep:" >> $DNLOG
+	if [[ "$cohort" == "FACSTAFF" ]]; then
+		echo "Status: Assigning and renaming device..." >> $DNLOG
+		$JAMFBIN policy -event enroll-assignFacstaff # This runs the script 'DEP-DEPNotify-assignFacstaff.sh'
+		userName=$(/usr/libexec/plistbuddy $DNPLIST -c "print 'Computer or User Name'" | tr [A-Z] [a-z])
+		echo "Status: Creating local user account with password as username..." >> $DNLOG
+		$JAMFBIN createAccount -username $userName -realname $userName -password $userName -admin
+	else
+		echo "Status: Setting computer name..." >> $DNLOG
+		$JAMFBIN setComputerName -name "${computerUserName}"
+	fi
+
 	# The firstRun scripts policies are were we set our receipts on the machines, no need to do them in this script.
 	echo "Command: MainTitle: $computerUserName"  >> $DNLOG
 	echo "Status: Running FirstRun scripts and installing packages..." >> $DNLOG
