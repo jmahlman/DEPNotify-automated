@@ -15,6 +15,7 @@
 #
 # Changelog
 #
+# 10/17/18- Removed some curly braces that I think were causing issues.
 # 9/10/18	-	Fixed some format issues and an if-statement that was incorrect. Oh, and spell check :P
 # 8/24/18	- Removed an entire section of "MainText" because it was redundant.
 # 8/23/18	- Moved the caffeinate command because it obviously wasn't running if a machine already existed.  Oops.
@@ -150,7 +151,7 @@ EOF
 		$JAMFBIN createAccount -username $userName -realname $userName -password $userName -admin
 	else
 		echo "Status: Setting computer name..." >> $DNLOG
-		$JAMFBIN setComputerName -name "${computerUserName}"
+		$JAMFBIN setComputerName -name "$computerUserName"
 	fi
 
 	# The firstRun scripts policies are were we set our receipts on the machines, no need to do them in this script.
@@ -163,8 +164,8 @@ automatically when it's finished. \n \n Cohort: $cohort \n \n macOS Version: $OS
 
 	if [[ "$cohort" == "CHECKOUT" ]] || [[ "$cohort" == "OFFICE" ]] || [[ "$cohort" == "FACSTAFF" ]] \
 	|| [[ "$cohort" == "MUSIC" ]] || [[ "$cohort" == "KIOSK" ]]; then
-		$JAMFBIN policy -event install-"${cohort}"-software
-		$JAMFBIN policy -event enroll-firstRun"${cohort}"-scripts
+		$JAMFBIN policy -event install-"$cohort"-software
+		$JAMFBIN policy -event enroll-firstRun"$cohort"-scripts
 	else
 		$JAMFBIN policy -event install-PUBLIC-software
 		$JAMFBIN policy -event enroll-firstRunPUBLIC-scripts
@@ -181,7 +182,7 @@ automatically when it's finished. \n \n Cohort: $cohort \n \n macOS Version: $OS
 
 	echo "Command: DeterminateManualStep:" >> $DNLOG
 	echo "Status: Cleaning up files and restarting system..." >> $DNLOG
-  kill "$caffeinatepid"
+  kill $caffeinatepid
   echo "Command: RestartNow:" >>  $DNLOG
 
   # Remove DEPNotify and the logs
@@ -190,14 +191,14 @@ automatically when it's finished. \n \n Cohort: $cohort \n \n macOS Version: $OS
   /bin/rm -Rf $DNLOG
   /bin/rm -Rf $DNPLIST
 
-  # Wait a few seconds
-  sleep 5
+	# Wait a few seconds
+	sleep 5
 	# Remove the autologin user password file so it doesn't login again
 	/bin/rm -Rf /etc/kcpassword
-  # Create a bom file that allow this script to stop launching DEPNotify after done
-  /usr/bin/touch /var/db/receipts/com.uarts.provisioning.done.bom
-  # Remove the Launch Daemon
-  /bin/rm -Rf /Library/LaunchDaemons/com.uarts.launch.plist
+	# Create a bom file that allow this script to stop launching DEPNotify after done
+	/usr/bin/touch /var/db/receipts/com.uarts.provisioning.done.bom
+	# Remove the Launch Daemon
+	/bin/rm -Rf /Library/LaunchDaemons/com.uarts.launch.plist
 	# Remove this script
 	/bin/rm -- "$0"
 
