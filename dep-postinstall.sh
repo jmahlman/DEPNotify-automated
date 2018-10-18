@@ -38,5 +38,11 @@ done
 echo  "add auto-login user" >> /var/log/jamf.log
 	/usr/local/jamf/bin/jamf policy -event dep-autologin
 
+echo "Rebooting!" >> /var/log/jamf.log
+	/sbin/shutdown -r +1 &
+
+# Wait a few seconds
+sleep 5
+
 exit 0		## Success
 exit 1		## Failure
