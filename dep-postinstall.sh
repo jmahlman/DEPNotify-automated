@@ -10,10 +10,6 @@ echo  "set power management" >> /var/log/jamf.log
 	pmset -c displaysleep 60 disksleep 0 sleep 0 womp 0 ring 0 autorestart 0 halfdim 1 sms 1
 	pmset -b displaysleep 5 disksleep 1 sleep 10 womp 0 ring 0 autorestart 0 halfdim 1 sms 1
 
-# Disable diagnostic data
-	SUBMIT_DIAGNOSTIC_DATA_TO_APPLE=FALSE
-	SUBMIT_DIAGNOSTIC_DATA_TO_APP_DEVELOPERS=FALSE
-
 ## Make the main script executable
 echo  "setting main script permissions" >> /var/log/jamf.log
 	chmod a+x /var/tmp/com.uarts.DEPprovisioning
